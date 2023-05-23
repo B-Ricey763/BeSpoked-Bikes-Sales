@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "bespoked-bikes-sales"
+version = "0.1.0"
+description = ""
+authors = ["B-Ricey763 <39998963+B-Ricey763@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "bespoked_bikes_sales"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
