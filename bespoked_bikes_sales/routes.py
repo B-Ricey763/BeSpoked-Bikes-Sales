@@ -14,8 +14,12 @@ from functools import partial
 # more love
 
 def price_of_sale(sale):
+	# Discounts are never explicitly shown or added in the UI, but
+	# as it was a requirement, some discounts were included on the backend 
+	# (including 2 discounts on one item), and we have to factor them in 
+	# when figuring out the price
     total_discount = 0
-    # Assumes there can be multiple discounts for one item
+    # Assumes there can be multiple discounts for one item.
     for discount in sale.product.discounts:
         if discount.begin_date < sale.sales_date and discount.end_date > sale.sales_date:
             total_discount += discount.discount_percentage
