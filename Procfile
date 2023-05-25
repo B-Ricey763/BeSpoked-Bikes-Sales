@@ -1,1 +1,1 @@
-web: poetry run flask --app bespoked-bikes-sales run
+web: gunicorn bespoked_bikes_sales:app
