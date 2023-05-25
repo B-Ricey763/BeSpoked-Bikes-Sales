@@ -1,7 +1,7 @@
 # BeSpoked-Bikes-Sales
 
 ## Quickstart
-This is a python project that uses [ poetry ]( https://python-poetry.org/ ) as it's package manager. To get started, install poetry, navigate to the directory of the repository, and run `poetry install` to get all of the dependencies.
+This is a (python 3.10)[https://www.python.org/downloads/release/python-3100/] project that uses [ poetry ]( https://python-poetry.org/ ) as it's package manager. To get started, install poetry, navigate to the directory of the repository, and run `poetry install` to get all of the dependencies.
 
 To run the server on your local machine in debug mode (for hot reloading), enter this command:
 ```shell
