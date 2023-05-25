@@ -1,7 +1,19 @@
 # BeSpoked-Bikes-Sales
 
-## Quickstart
-This is a [python 3.10](https://www.python.org/downloads/release/python-3100/) project that uses [ poetry ]( https://python-poetry.org/ ) as it's package manager. To get started, install poetry, navigate to the directory of the repository, and run `poetry install` to get all of the dependencies.
+## [App Demo (on Heroku)](https://bespoked-bikes-sales.herokuapp.com/sales-report)
+
+## Local Installation 
+This is a [python 3.10](https://www.python.org/downloads/release/python-3100/) project that uses [ poetry ]( https://python-poetry.org/ ) as it's package manager. To get started, make sure you have python 3.10.11 and poetry installed on your local device and clone the repository from github to your device. 
+
+Navigate to the directory of the repository:
+```shell
+cd BeSpoked-Bikes-Sales
+```
+And run
+```shell
+poetry install
+```
+To install all of the required dependencies. 
 
 To run the server on your local machine in debug mode (for hot reloading), enter this command:
 ```shell
