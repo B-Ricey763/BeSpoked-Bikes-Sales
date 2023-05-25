@@ -15,6 +15,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sales.db"
 app.config["SECRET_KEY"] = os.urandom(32)
 app.config["WTF_CSRF_TIME_LIMIT"] = None
 app.config["WTF_CSRF_SSL_STRICT"] = False
+app.config["WTF_CSRF_ENABLED"] = False
 
 
 db.init_app(app)
