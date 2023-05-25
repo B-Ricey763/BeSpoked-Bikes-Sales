@@ -1,0 +1,1 @@
+web: poetry run flask --app bespoked-bikes-sales run
