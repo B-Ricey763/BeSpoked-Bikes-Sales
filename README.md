@@ -1,6 +1,6 @@
 # BeSpoked-Bikes-Sales
 
-## [App Demo (on Heroku)](https://bespoked-bikes-sales.herokuapp.com/sales-report)
+## [App Demo (on Heroku)](https://bespoked-bikes-sales.herokuapp.com/)
 
 ## Local Installation 
 This is a [python 3.10](https://www.python.org/downloads/release/python-3100/) project that uses [ poetry ]( https://python-poetry.org/ ) as it's package manager. To get started, make sure you have python 3.10.11 and poetry installed on your local device and clone the repository from github to your device. 
