@@ -43,7 +43,7 @@ def update_salesperson(id):
     
     # Make sure we can't enter a duplicate salesperson
     def validate_no_duplicate_salesperson(id, form, field):
-        duplicate = db.session.execute(db.select(Salesperson).where(Salesperson.first_name == field.data).where(Salesperson.last_name == form.last_name.data)).scalar_one()
+        duplicate = db.session.execute(db.select(Salesperson).where(Salesperson.first_name == field.data).where(Salesperson.last_name == form.last_name.data)).scalar()
         if duplicate and duplicate.id != id:
             raise ValidationError("Already a salesperson with the same name!")
     # We have to check the length of the validators to make sure we 
@@ -90,7 +90,7 @@ def update_product(id):
 
 	# No duplicate products allowed!
     def validate_no_duplicate_product(id, form, field):
-        duplicate = db.session.execute(db.select(Product).where(Product.name == field.data)).scalar_one()
+        duplicate = db.session.execute(db.select(Product).where(Product.name == field.data)).scalar()
         if duplicate and duplicate.id != id:
             raise ValidationError("Already a product with the same name!")
     # Same mess for this as for the salesperson...
