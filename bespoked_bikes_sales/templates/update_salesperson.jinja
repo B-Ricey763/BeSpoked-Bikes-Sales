@@ -1,0 +1,25 @@
+{% extends "base.jinja" %}
+{% from "_formhelpers.jinja" import render_field %}
+
+{% block head %}
+<title>{{ person.first_name + " " + person.last_name }}</title>
+{% endblock head %}
+
+{% block body %}
+<div class="container">
+	<h1 class="display-3 text-center">{{ "Update {} {}".format(person.first_name, person.last_name) }}</h1>
+	<form action="/salespeople/{{ person.id }}" method="POST">
+		{{ form.csrf_token }}
+		{{ render_field(form.first_name, value=form.first_name.data, class="form-control") }}
+		{{ render_field(form.last_name, value=form.last_name.data, class="form-control") }}
+		{{ render_field(form.address, value=form.address.data, class="form-control") }}
+		{{ render_field(form.phone, value=form.phone.data, class="form-control") }}
+		{{ render_field(form.start_date, value=form.start_date.data, class="form-control", type="date") }}
+		{{ render_field(form.termination_date, value=form.termination_date.data, class="form-control") }}
+		{{ render_field(form.manager, value=form.manager.data, class="form-control") }}
+		<div class="d-grid gap-2 col-3 mx-auto">
+			<button type="submit" class="btn btn-success btn-lg text-center">Apply Changes</button>
+		</div>
+	</form>
+</div>
+{% endblock body %}

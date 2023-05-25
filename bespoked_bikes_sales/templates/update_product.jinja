@@ -1,0 +1,27 @@
+{% extends "base.jinja" %}
+{% from "_formhelpers.jinja" import render_field %}
+
+{% block head %}
+<title>{{ product.name }}</title>
+{% endblock head %}
+
+{% block body %}
+<div class="container">
+	<h1 class="display-3 text-center">{{ "Update {}".format(product.name) }}</h1>
+	<form action="/products/{{ product.id }}" method="POST">
+		{{ form.csrf_token }}
+		{{ render_field(form.name, value=form.name.data, class="form-control") }}
+		{{ render_field(form.manufacturer, value=form.manufacturer.data, class="form-control") }}
+		{{ render_field(form.style, value=form.style.data, class="form-control") }}
+		{{ render_field(form.purchase_price, value=form.purchase_price.data, class="form-control", type="number") }}
+		{{ render_field(form.sale_price, value=form.sale_price.data, class="form-control", type="number") }}
+		{{ render_field(form.quantity, value=form.quantity.data, class="form-control", type="number") }}
+		{{ render_field(form.commission_percentage, value=form.commission_percentage.data, class="form-control",
+		type="number")
+		}}
+		<div class="d-grid gap-2 col-3 mx-auto">
+			<button type="submit" class="btn btn-success btn-lg text-center">Apply Changes</button>
+		</div>
+	</form>
+</div>
+{% endblock body %}

@@ -1,0 +1,22 @@
+{% extends "base.jinja" %}
+{% from "_formhelpers.jinja" import render_field %}
+
+{% block head %}
+<title>Create Sale</title>
+{% endblock head %}
+
+{% block body %}
+<div class="container">
+	<h1 class="display-3 text-center">{{ "Create Sale" }}</h1>
+	<form action="/create-sale" method="POST">
+		{{ form.csrf_token }}
+		{{ render_field(form.product, class="form-select") }}
+		{{ render_field(form.salesperson, class="form-select") }}
+		{{ render_field(form.customer, class="form-select") }}
+		{{ render_field(form.sales_date, class="form-select", value=today) }}
+		<div class="d-grid gap-2 col-3 mx-auto">
+			<button type="submit" class="btn btn-success btn-lg text-center">Create</button>
+		</div>
+	</form>
+</div>
+{% endblock body %}

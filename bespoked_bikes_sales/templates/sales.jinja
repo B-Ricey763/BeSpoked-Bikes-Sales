@@ -1,0 +1,38 @@
+{% extends "base.jinja" %}
+
+{% block head %}
+<title>Sales</title>
+{% endblock head %}
+
+{% block body %}
+<div class="container">
+	<h1 class="display-3 mt-3 mb-3 text-center">Sales</h1>
+
+	{% include "filter_sales.jinja" %}
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Product</th>
+				<th scope="col">Customer</th>
+				<th scope="col">Date</th>
+				<th scope="col">Price</th>
+				<th scope="col">Salesperson</th>
+				<th scope="col">Salesperson Commission</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for sale in sales %}
+			<tr>
+				<td>{{ sale.product }}</td>
+				<td>{{ sale.customer }}</td>
+				<td>{{ sale.date }}</td>
+				<td>{{ "${:,.2f}".format(sale.price) }}</td>
+				<td>{{ sale.salesperson }}</td>
+				<td>{{ "${:,.2f}".format(sale.commission) }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock body %}

@@ -1,0 +1,18 @@
+{% from "_formhelpers.jinja" import render_field %}
+<form method="post" action="/sales" class="row">
+	{{ form.csrf_token }}
+	<div class="col-md-2">
+		{{ render_field(form.start_date, class="form-control", type="date") }}
+	</div>
+	<div class="col-md-2">
+		{{ render_field(form.end_date, class="form-control", type="date") }}
+	</div>
+	<div class="row">
+		<div class="col">
+			<button type="submit" class="btn btn-secondary mb-3">Apply filter</button>
+		</div>
+		<div class="col text-end">
+			<a href="/create-sale" class="btn btn-success">Create New Sale</a>
+		</div>
+	</div>
+</form>

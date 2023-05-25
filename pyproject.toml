@@ -8,6 +8,9 @@ packages = [{include = "bespoked_bikes_sales"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+flask = "^2.3.2"
+flask-sqlalchemy = "^3.0.3"
+flask-wtf = "^1.1.1"
 
 
 [build-system]

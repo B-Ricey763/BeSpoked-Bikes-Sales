@@ -1,0 +1,40 @@
+{% include "base.jinja" %}
+{% from "_formhelpers.jinja" import render_field %}
+
+{% block head %}
+<title>Sales Report</title>
+{% endblock head %}
+
+{% block body %}
+
+<div class="container text-center">
+	<div class="row">
+		<div class="col">
+			<h1 class="display-3 text-center mb-3"> Commission Report</h1>
+		</div>
+		<form action="/sales-report" class="col" method="POST">
+			{{ form.csrf_token }}
+			{{ render_field(form.year, class="form-select") }}
+			<button type="submit" class="btn btn-secondary btn-lg text-center">Go to Year</button>
+		</form>
+	</div>
+	<div class="row">
+		{% for i, quarter in quarters %}
+		<div class="col">
+			<h1 class="display-5">Quarter {{i + 1}}</h1>
+			<ul class="list-group">
+				{% for person in quarter %}
+				{% if person.total_commission > 0 %}
+				<li class="list-group-item">
+					{{ person.name }}: {{ "${:,.2f}".format(person.total_commission) }}
+				</li>
+				{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+		{% endfor %}
+
+	</div>
+</div>
+
+{% endblock body %}
