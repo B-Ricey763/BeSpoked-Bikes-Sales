@@ -25,6 +25,10 @@ discounts = [
     Discount(product_id=2, begin_date=date(2023, 2, 5), end_date=date(2023, 4, 10), discount_percentage=0.25)
 ]
 
+sales = [
+    Sale(product_id=1, salesperson_id=1, customer_id=1, sales_date=date(2023, 5, 25))
+]
+
 def seed_db():
     with app.app_context():
         for customer in customers:
@@ -35,6 +39,8 @@ def seed_db():
             db.session.add(salesperson)
         for discount in discounts:
             db.session.add(discount)
+        for sale in sales:
+            db.session.add(sale)
         db.session.commit()
 
 def create_tables():
@@ -44,4 +50,6 @@ def create_tables():
 
 if __name__ == "__main__":
     create_tables()
+    print("Created tables!")
     seed_db()
+    print("Seeded database!")

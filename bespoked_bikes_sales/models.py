@@ -8,6 +8,12 @@ String = db.String
 relationship = db.relationship
 ForeignKey = db.ForeignKey
 
+# Because of Python 3.10, we can use type annotations on the models
+# to faciliate their creation with as little boilerplate as possible.
+#
+# Each model defines a table of records in our database, with relational
+# mappings denoted by the relationship() function
+
 class Product(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
@@ -29,7 +35,8 @@ class Salesperson(db.Model):
     start_date: Mapped[date] = mapped_column()
     termination_date: Mapped[date] = mapped_column()
     manager: Mapped[str] = mapped_column(String(40))
-
+	# This is the only bidirectional relationship, since both
+	# salespeople need their sales and sales need to know who sold them
     sales: Mapped[List["Sale"]] = relationship(back_populates="salesperson")
 
 class Customer(db.Model):

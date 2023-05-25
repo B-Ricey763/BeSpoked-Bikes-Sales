@@ -3,7 +3,36 @@
 {% block head %}
 <title>BeSpoked Bikes</title>
 {% endblock head %}
-
 {% block body %}
-Hello world!
+<div class="container">
+	<div class="row">
+		<h1 class="display-1 text-center">BeSpoked Bikes Sales</h1>
+		<p class="text-center"> Made for the 48 hour tech exercise for Profisee by Bryce Hanna</p>
+		<a href="https://github.com/B-Ricey763/BeSpoked-Bikes-Sales">
+			<p class="display-6 text-center">Github Repo</p>
+		</a>
+	</div>
+	<div class="row">
+		<div class="col text-center">
+			<a class="btn btn-primary btn-lg" href="/salespeople">List of Salespeople</a>
+		</div>
+		<div class="col text-center">
+			<a class="btn btn-primary btn-lg" href="/products">List of Products</a>
+		</div>
+		<div class="col text-center">
+			<a class="btn btn-primary btn-lg" href="/customers">List of Customers</a>
+		</div>
+	</div>
+	<div class="row mt-5">
+		<div class="col text-center">
+			<a class="btn btn-dark btn-lg" href="/sales">List of Sales</a>
+		</div>
+		<div class="col text-center">
+			<a class="btn btn-secondary btn-lg" href="/create-sale">Create Sale</a>
+		</div>
+		<div class="col text-center">
+			<a class="btn btn-success btn-lg" href="/sales-report">Sales Report</a>
+		</div>
+	</div>
+</div>
 {% endblock body %}

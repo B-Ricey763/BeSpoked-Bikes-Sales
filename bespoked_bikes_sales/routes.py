@@ -5,8 +5,13 @@ from flask_wtf import FlaskForm
 from bespoked_bikes_sales.forms import *
 from bespoked_bikes_sales.models import *
 from bespoked_bikes_sales import app
+from functools import partial
 
-# HELPER FUNCTIONS
+# HELPER FUNCTION(S)
+#
+# Most of the helpers are only used once and thus they
+# are within their respective routes, but this one gets a bit
+# more love
 
 def price_of_sale(sale):
     total_discount = 0
@@ -15,17 +20,6 @@ def price_of_sale(sale):
         if discount.begin_date < sale.sales_date and discount.end_date > sale.sales_date:
             total_discount += discount.discount_percentage
     return sale.product.sale_price * (1 - total_discount)
-
-def validate_no_duplicate_product(form, field):
-    duplicate = db.session.execute(db.select(Product).where(Product.name == field.data)).first()
-    if duplicate:
-        raise ValidationError("Already a product with the same name!")
-
-def validate_no_duplicate_salesperson(form, field):
-    duplicate_first = db.session.execute(db.select(Salesperson).where(Salesperson.first_name == field.data)).first()
-    duplicate_last = db.session.execute(db.select(Salesperson).where(Salesperson.last_name == form.last_name.data)).first()
-    if duplicate_first and duplicate_last:
-        raise ValidationError("Already a salesperson with the same name!")
 
 # ROUTES
 
@@ -42,17 +36,42 @@ def salespeople():
 def update_salesperson(id):
     person = Salesperson.query.get_or_404(id)
     form = UpdateSalespersonForm()
-    # make this less ugly potentially
+
     if request.method == "GET":
+        # Populate the form with the current db entry so user can edit
         form = UpdateSalespersonForm(obj=person, formdata=None)
     
+    # Make sure we can't enter a duplicate salesperson
+    def validate_no_duplicate_salesperson(id, form, field):
+        duplicate = db.session.execute(db.select(Salesperson).where(Salesperson.first_name == field.data).where(Salesperson.last_name == form.last_name.data)).scalar_one()
+        if duplicate and duplicate.id != id:
+            raise ValidationError("Already a salesperson with the same name!")
+    # We have to check the length of the validators to make sure we 
+    # don't add extra of the same one after resubmissions
     if request.method == "POST":
-        form.first_name.validators.append(validate_no_duplicate_salesperson)
+        # Since we are validating the form dynamically, we have to manually
+        # insert the validator function... I know, it's ugly
+        if len(form.first_name.validators) < 2:
+            # partial function application to keep the id variable in scope... python
+            # why is there no first class functions??!?!?!
+            form.first_name.validators.append(partial(validate_no_duplicate_salesperson, id))
+        else:
+            # And for some reason you have to do this every time to keep the current context??
+            # I don't really know why I need this, but the form somehow persists a bit in between
+            # requests so we have to re-add it every time -- don't really have time to figure out
+            form.first_name.validators[1] = partial(validate_no_duplicate_salesperson, id)
+
     if form.validate_on_submit():
+        # Convenient use of populate_obj so we don't have to compare
+        # each and every field of the form with the person model 
         form.populate_obj(person)
         db.session.commit()
+        # Bring them back to the list to see their updates
         return redirect("/salespeople")
 
+    # We probably don't need to send the person as well as the form,
+    # but for the rare case where the form is invalid, we don't want the 
+    # title updating to something invalid as well
     return render_template("update_salesperson.jinja", person=person, form=form)
 
 @app.route("/products")
@@ -62,15 +81,25 @@ def products():
 
 @app.route("/products/<int:id>", methods=["GET", "POST"])
 def update_product(id):
+    # Basically the same deal as update_salesperson, but for products!
     product = Product.query.get_or_404(id)
+
     form = UpdateProductForm()
-    # make this less ugly potentially
     if request.method == "GET":
         form = UpdateProductForm(obj=product, formdata=None)
 
-
+	# No duplicate products allowed!
+    def validate_no_duplicate_product(id, form, field):
+        duplicate = db.session.execute(db.select(Product).where(Product.name == field.data)).scalar_one()
+        if duplicate and duplicate.id != id:
+            raise ValidationError("Already a product with the same name!")
+    # Same mess for this as for the salesperson...
     if request.method == "POST":
-        form.name.validators.append(validate_no_duplicate_product)
+        if len(form.name.validators) < 2:
+            form.name.validators.append(partial(validate_no_duplicate_product, id))
+        else:
+            # My eyes..... 
+            form.name.validators[1] = partial(validate_no_duplicate_product, id)
 
     if form.validate_on_submit():
         form.populate_obj(product)
@@ -86,11 +115,6 @@ def customers():
 
 @app.route("/sales", methods=["GET", "POST"])
 def sales():
-    sales_list = db.session.execute(db.select(Sale)).scalars()
-    filter_form: FlaskForm = FilterSalesForm()
-    if filter_form.validate_on_submit():
-        sales_list = filter(lambda s: filter_form.start_date.data < s.sales_date < filter_form.end_date.data, sales_list)
-
     def make_sale_readable(sale):
         return {
             "product": sale.product.name,
@@ -100,18 +124,40 @@ def sales():
             "salesperson": f"{sale.salesperson.first_name} {sale.salesperson.last_name}",
             "commission": price_of_sale(sale) * sale.product.commission_percentage, 
         }
-    readable_sales = map(make_sale_readable, sales_list)
 
+
+    sales_list = db.session.execute(db.select(Sale)).scalars()
+    filter_form: FlaskForm = FilterSalesForm()
+    if filter_form.validate_on_submit():
+        # If they want a date filter, we do that
+        sales_list = filter(
+            lambda s: filter_form.start_date.data < s.sales_date < filter_form.end_date.data, sales_list)
+
+    # Since a sale is basically just a list of foreign keys, we have to polish it up a bit
+    readable_sales = map(make_sale_readable, sales_list)
     return render_template("sales.jinja", sales=readable_sales, form=filter_form)
 
 @app.route("/create-sale", methods=["GET", "POST"])
 def create_sale():
     form = CreateSaleForm()
+
+	# Make sure the dates in which the salesperson is working
+    # contains the requested sales date
+    def validate_salesperson_date(form, field):
+        salesperson = Salesperson.query.get(field.data)
+        if salesperson.start_date > form.sales_date.data or form.sales_date.data > salesperson.termination_date:
+            raise ValidationError("Salesperson is not active during sales date!")
+
+    if request.method == "POST" and len(form.salesperson.validators) < 2:
+        form.salesperson.validators.append(validate_salesperson_date)
+
     # Dynamically populate the dropdown list since it's sourced from the database 
+    # This use of list comprehensions should've been neat, but honestly it's just ugly.
+    # Gets the job done though 
     form.product.choices = [(product.id, product.name) for product in db.session.execute(db.select(Product)).scalars()]
     form.salesperson.choices = [(sp.id, f"{sp.first_name} {sp.last_name}") for sp in db.session.execute(db.select(Salesperson)).scalars()]
     form.customer.choices = [(c.id, f"{c.first_name} {c.last_name}") for c in db.session.execute(db.select(Customer)).scalars()]
-    if request.method == "POST" and form.validate():
+    if form.validate_on_submit():
         new_sale = Sale(
             product_id=form.product.data,
             salesperson_id=form.salesperson.data,
@@ -125,13 +171,17 @@ def create_sale():
 
 @app.route("/sales-report", methods=["GET", "POST"])
 def sales_report():
+    # Default year is this year
     year = date.today().year
     form = YearReportForm()
-    print(form.validate())
     
     if form.validate_on_submit():
+        # If they specify a year and POST it, we change it 
         year = form.year.data
 
+    # This entire next section of code could've been a lot more 
+    # concise using functional programming strategies like folds, maps, and filters
+    # but it would just not work very well in python... this does work nicely though 
     quarters = []
     for start_month in range(1, 12, 3):
         end_month = start_month + 2
