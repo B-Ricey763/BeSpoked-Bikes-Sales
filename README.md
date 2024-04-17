@@ -1,4 +1,5 @@
 # BeSpoked-Bikes-Sales
+![sales demo)(/sales_demo.png)
 A simple CRUD app meant to simulate running a bike company with sales, customers, purchases, and other management system. Made for the 48 hour technical challenge for Profisee. 
 
 ## Local Installation 
@@ -16,7 +17,7 @@ To install all of the required dependencies.
 
 To run the server on your local machine in debug mode (for hot reloading), enter this command:
 ```shell
-poetry run flask --app bespoked-bikes-sales run --debug
+poetry run flask --app bespoked_bikes_sales run --debug
 ```
 
 If you ever want to recreate the database (using the seeding data provided in `bespoked_bikes_sales/db_setup.py`), delete `instance/sales.db` and run the `db_setup.py` script:
