@@ -1,6 +1,6 @@
 # BeSpoked-Bikes-Sales
 
-![sales demo)(sales_demo.png)
+![sales demo](sales_demo.png)
 
 A simple CRUD app meant to simulate running a bike company with sales, customers, purchases, and other management system. Made for the 48 hour technical challenge for Profisee. 
 
